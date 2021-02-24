@@ -87,9 +87,9 @@
             aria-label="Default select example"
             id="note_select"
           >
-            <option selected value="60">C</option>
-            <option value="67">G</option>
-            <option value="69">A</option>
+            <option selected value="60" noteIndex="1">C</option>
+            <option value="67" noteIndex="8">G</option>
+            <option value="69" noteIndex="10">A</option>
           </select>
         </div>
       </div>
@@ -156,15 +156,13 @@
       </div>
     </div>
 
-    <div id="test" value="" hidden>sakjdwerhi</div>
-
     <script>
-
       var synth_ul = new Tone.PolySynth().toDestination();
       var synth_ur = new Tone.PolySynth().toDestination();
       document
         .querySelector("tone-play-toggle")
         .addEventListener("start", () => Tone.Transport.start());
+      document.querySelector("tone-slider").addEventListener("input", (e) => Tone.Transport.bpm.value = parseFloat(e.target.value));
       document
         .querySelector("tone-play-toggle")
         .addEventListener("stop", () => Tone.Transport.stop());
@@ -176,8 +174,6 @@
       document.getElementById("note_select").addEventListener("change", () => {
         START_NOTE = document.getElementById("note_select").value;
       });
-
-      let NOTES_SELECTED_BY_USER = [];
       var SCALE_JUMP = [0, 2, 3, 5, 7, 8, 10, 12];
       var START_NOTE = 60;
       document
@@ -283,6 +279,7 @@
       document
         .querySelector("#up_right")
         .addEventListener("trigger", ({ detail }) => {
+          
           switch (detail.row) {
             case 0: {
               synth_ur.triggerAttackRelease(

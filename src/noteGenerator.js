@@ -1,5 +1,5 @@
 const notes = [
-    //C    C#   D   D#   E    F    F#   G    G#   A   A#    B  
+    // C    C#   D   D#   E    F    F#   G    G#   A   A#    B  
     [1643, 77, 420, 70, 514, 116, 606, 232, 110, 554, 299, 649],
     [86, 1750, 408, 156, 377, 152, 608, 157, 298, 277, 117, 700],
     [589, 545, 2739, 26, 607, 156, 866, 581, 125, 425, 419, 665],
@@ -14,13 +14,12 @@ const notes = [
     [504, 709, 759, 168, 994, 144, 1286, 748, 352, 1260, 543, 4083]
 ];
 
-let maj = [0, 2, 4, 5, 7, 9, 11, 12]
-
 // C = 0, C# = 1, ..., B = 11
 function generateNextNote() {
     const currentScale = getCurrentScale();
     console.log("Current scale: " + currentScale)
-    const scaleNotes = getNotesMajorInScale(currentScale); // Array of notes
+    //scaleNotes gets the array of notes to choose from
+    const scaleNotes = getNotesInMajorScale(currentScale); // Array of notes
     console.log("scaleNotes: " + scaleNotes)
 
     // Assuming the user chose only a single note
@@ -43,12 +42,15 @@ function generateNextNote() {
         totalPossibilitySpace += value_in_table;
     });
 
+    // Calculating notes probabilities by taking number of occurences and dividing by the total number of occurences
+    // const notesProbabilities = notesInScaleToPosibillities.map(x => x / totalPossibilitySpace);
     // Generate a random number between 0 - totalPossibilitySpace
+
     const randomNumber = getRandomInt(totalPossibilitySpace);
-    var counter = 0;
+    var sumOfOccurences = 0;
     scaleNotes.forEach((currentNote) => {
-        counter += notesInScaleToPosibillities[currentNote];
-        if (randomNumber < counter) {
+        sumOfOccurences += notesInScaleToPosibillities[currentNote];
+        if (randomNumber < sumOfOccurences) {
             return currentNote;
         }
     });
@@ -59,32 +61,30 @@ function getRandomInt(max) {
 }
 
 function getCurrentScale() {
-    return document.getElementById("note_select").value
+    const nodeSelect = document.getElementById("note_select");
+    return parseInt(nodeSelect.options[nodeSelect.selectedIndex].getAttribute("noteIndex"));
 }
 
 function getInputNoteFromUser() {
     // Assuming a single number which represent a note
-    return document.getElementById("note_select").value
+    return window.NOTES_SELECTED_BY_USER[-1];
 }
 
-function getNotesMajorInScale(rootNote) {
+function getNotesInMajorScale(rootNote) {
     return [rootNote,
         getNoteByInterval(rootNote, 2),
         getNoteByInterval(rootNote, 3),
         getNoteByInterval(rootNote, 5),
         getNoteByInterval(rootNote, 7),
         getNoteByInterval(rootNote, 8),
-        getNoteByInterval(rootNote, 10)]
+        getNoteByInterval(rootNote, 10)];
 }
 
 function getNoteByInterval(originalNote, interval) {
-    return (originalNote + interval) % 12
+    return ((originalNote + interval) % 12);
 }
 
 
 
-function onAutoCompleteClicked() {
-
-}
 
 export { generateNextNote }; // a list of exported items

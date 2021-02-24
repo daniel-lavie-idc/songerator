@@ -1,0 +1,4 @@
+TODO 
+1. Create a loop to predict next note in the first sequencer using the note generator function.
+2. Generate notes for the second sequencer using the first sequencer's notes and the prediction table.
+3. Demo button- load i

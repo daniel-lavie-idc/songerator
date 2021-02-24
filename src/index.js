@@ -1,7 +1,10 @@
 import * as Tone from "tone";
 import * as NoteGenerator from './noteGenerator.js';
+import * as Algorithm from './Algorithm';
 
 window.addEventListener('load', () => {
+    //default values
+    //SCALE_JUMP
     window.SCALE_JUMP = [0, 2, 3, 5, 7, 8, 10, 12];
     window.CURRENT_SCALE = [];
     window.START_NOTE = 60;
@@ -13,6 +16,7 @@ window.addEventListener('load', () => {
     for (let i = 0; i < window.SCALE_JUMP.length; i++) {
         window.CURRENT_SCALE[i] = window.START_NOTE + window.SCALE_JUMP[i];
     }
+    Algorithm.hookStepSequencerUpdateCell();
 })
 
 //updating current scale, when the scale list is changed
@@ -22,6 +26,7 @@ document.getElementById("SCALE_SELECT").addEventListener("change", () => {
     for (let i = 0; i < window.SCALE_JUMP.length; i++) {
         window.CURRENT_SCALE[i] = window.START_NOTE + window.SCALE_JUMP[i];
     }
+    //TODO:PLACE HERE FUNC TO RENDER THE NEW SEQUENCER
 });
 //updating start note, when the note 
 document.getElementById("note_select").addEventListener("change", () => {
@@ -31,16 +36,15 @@ document.getElementById("note_select").addEventListener("change", () => {
     }
 }
 );
+function getLastPlayed()
+{
 
-function onAutoCompleteClicked() {
-    /*
-    unfilledNotes = getUnfilledNotes();
-    unfilledNotes.array.forEach(element => {
-        nextNote = generateNextNote();
-        updateNoteInUI(element); 
-    });*/
+
 }
 
+function onAutoCompleteClicked() {
+    
+}
 
 document.getElementById("inst_1").addEventListener("click", () => onAutoCompleteClicked());
 document.getElementById("inst_2").addEventListener("click", () => NoteGenerator.generateNextNote());
