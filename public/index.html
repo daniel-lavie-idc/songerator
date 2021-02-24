@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" />
+
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+    <!--
+      Notice the use of %PUBLIC_URL% in the tags above.
+      It will be replaced with the URL of the `public` folder during the build.
+      Only files inside the `public` folder can be referenced from the HTML.
+
+      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
+      work correctly both with client-side routing and a non-root public URL.
+      Learn how to configure a non-root public URL by running `npm run build`.
+    -->
+    <script src="Tone.js"></script>
+    <script src="tone-ui.js"></script>
+    <script src="components.js"></script>
+    <script src="index.js"></script>
+    <link rel="stylesheet" type="text/css" href="index.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link
+      rel="stylesheet"
+      href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css"
+    />
+    <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+    <link
+      rel="stylesheet"
+      href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700"
+      type="text/css"
+    />
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <title>Songerator</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <div class="header_div">
+        <div class="tempo_slider">
+          <tone-slider
+            label="tempo"
+            units="bpm"
+            min="60"
+            max="240"
+            value="120"
+          ></tone-slider>
+        </div>
+        <div class="play_button">
+          <tone-play-toggle id="sequencer"></tone-play-toggle>
+        </div>
+        <div
+          class="btn-group choose_verse"
+          role="group"
+          aria-label="choose_section"
+        >
+          <button type="button" class="btn btn-danger">Verse I</button>
+          <button type="button" class="btn btn-warning">Verse II</button>
+          <button type="button" class="btn btn-success">Chorus</button>
+        </div>
+        <div class="SCALE_SELECT">
+          <select
+            class="form-select form-select-lg mb-3"
+            aria-label="Default select example"
+            id="SCALE_SELECT"
+          >
+            <option selected value="1">Minor</option>
+            <option value="2">Major</option>
+          </select>
+        </div>
+        <div class="note_select">
+          <select
+            class="form-select form-select-lg mb-3"
+            aria-label="Default select example"
+            id="note_select"
+          >
+            <option selected value="60">C</option>
+            <option value="67">G</option>
+            <option value="69">A</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="wrapper">
+        <div class="up_left">
+          <tone-loader></tone-loader>
+          <div>
+            <div class="test">
+              <button type="button" class="btn btn-primary" id="inst_1">
+                Auto-Complete
+              </button>
+              <h1 class="display-6 headers">Instrument I</h1>
+            </div>
+            <div>
+              <tone-step-sequencer
+                columns="16"
+                rows="8"
+                id="up_left"
+              ></tone-step-sequencer>
+            </div>
+          </div>
+        </div>
+        <div class="up_right">
+          <tone-loader></tone-loader>
+          <div>
+            <div class="test">
+              <button type="button" class="btn btn-primary" id="inst_2">
+                Auto-Complete
+              </button>
+              <h1 class="display-6 headers">Instrument II</h1>
+            </div>
+            <tone-step-sequencer
+              columns="16"
+              rows="8"
+              id="up_right"
+            ></tone-step-sequencer>
+          </div>
+        </div>
+
+        <div class="down_left">
+          <tone-loader></tone-loader>
+          <div>
+            <h1 class="display-6 headers">Instrument III</h1>
+            <tone-step-sequencer
+              columns="16"
+              rows="8"
+              id="down_left"
+            ></tone-step-sequencer>
+          </div>
+        </div>
+        <div class="down_right">
+          <h1 class="display-6 headers">Instrument IV</h1>
+          <tone-loader></tone-loader>
+          <div id="content">
+            <tone-step-sequencer
+              columns="16"
+              rows="8"
+              id="down_right"
+            ></tone-step-sequencer>
+          </div>
+          ``
+        </div>
+      </div>
+    </div>
+
+    <div id="test" value="" hidden>sakjdwerhi</div>
+
+    <script>
+
+      var synth_ul = new Tone.PolySynth().toDestination();
+      var synth_ur = new Tone.PolySynth().toDestination();
+      document
+        .querySelector("tone-play-toggle")
+        .addEventListener("start", () => Tone.Transport.start());
+      document
+        .querySelector("tone-play-toggle")
+        .addEventListener("stop", () => Tone.Transport.stop());
+
+      document.getElementById("SCALE_SELECT").addEventListener("change", () => {
+        SCALE_SELECT = document.getElementById("SCALE_SELECT").value;
+      });
+
+      document.getElementById("note_select").addEventListener("change", () => {
+        START_NOTE = document.getElementById("note_select").value;
+      });
+
+      let NOTES_SELECTED_BY_USER = [];
+      var SCALE_JUMP = [0, 2, 3, 5, 7, 8, 10, 12];
+      var START_NOTE = 60;
+      document
+        .querySelector("tone-step-sequencer")
+        .addEventListener("trigger", ({ detail }) => {
+          switch (SCALE_SELECT) {
+            case 1:
+              SCALE_JUMP = MINOR_INTERVALS;
+              break;
+            case 2:
+              SCALE_JUMP = MAJOR_INTERVALS;
+              break;
+          }
+
+          let CURRENT_SCALE = [];
+          for (let i = 0; i < SCALE_JUMP.length; i++) {
+            CURRENT_SCALE[i] = START_NOTE + SCALE_JUMP[i];
+          }
+          switch (detail.row) {
+            case 0: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[0], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[0]);
+              break;
+            }
+            case 1: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[1], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[1]);
+              break;
+            }
+            case 2: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[2], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[2]);
+              break;
+            }
+            case 3: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[3], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[3]);
+              break;
+            }
+            case 4: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[4], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[4]);
+              break;
+            }
+            case 5: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[5], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[5]);
+              break;
+            }
+            case 6: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[6], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[6]);
+              break;
+            }
+            case 7: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[7], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[7]);
+              break;
+            }
+            case 8: {
+              synth_ul.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[8], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[8]);
+              break;
+            }
+          }
+        });
+      document
+        .querySelector("#up_right")
+        .addEventListener("trigger", ({ detail }) => {
+          switch (detail.row) {
+            case 0: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[0], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 1: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[1], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 2: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[2], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 3: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[3], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 4: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[4], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 5: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[5], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 6: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[6], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 7: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[7], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+            case 8: {
+              synth_ur.triggerAttackRelease(
+                Tone.Frequency(CURRENT_SCALE[8], "midi").toNote(),
+                "4n",
+                detail.time
+              );
+              break;
+            }
+          }
+        });
+    </script>
+    <div class="footer"></div>
+  </body>
+</html>
