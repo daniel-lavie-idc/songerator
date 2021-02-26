@@ -1,4 +1,5 @@
-const notes = [
+const SILENCE_PROB = 0.2;
+const notesOccurrences = [
     // C    C#   D   D#   E    F    F#   G    G#   A   A#    B  
     [1643, 77, 420, 70, 514, 116, 606, 232, 110, 554, 299, 649],
     [86, 1750, 408, 156, 377, 152, 608, 157, 298, 277, 117, 700],
@@ -15,45 +16,49 @@ const notes = [
 ];
 
 // C = 0, C# = 1, ..., B = 11
-function generateNextNote() {
+function generateNextNote(lastScaleDegreePlayed) {
     const currentScale = getCurrentScale();
-    console.log("Current scale: " + currentScale)
+    console.log("Current scale: " + currentScale);
+
     //scaleNotes gets the array of notes to choose from
     const scaleNotes = getNotesInMajorScale(currentScale); // Array of notes
-    console.log("scaleNotes: " + scaleNotes)
+    console.log("Scale notes: " + scaleNotes);
 
     // Assuming the user chose only a single note
-    const inputNoteFromUser = getInputNoteFromUser();
-    console.log("Input from user: " + inputNoteFromUser)
+    console.log("Scale degree chosen by user: " + lastScaleDegreePlayed);
 
-    const currentNotePosibillities = notes[inputNoteFromUser]
-    console.log("currentNotePosibillities: " + currentNotePosibillities)
+    // Indexing the note occurrences table according to the scale degree
+    const currentNotePosibillities = notesOccurrences[scaleNotes[lastScaleDegreePlayed]];
+    console.log("currentNotePosibillities: " + currentNotePosibillities);
 
-    // TODO: Add silence probability
-    var notesInScaleToPosibillities = {}
-
-    scaleNotes.forEach((currentNote) => {
-        notesInScaleToPosibillities.set(currentNote, currentNotePosibillities[currentNote]);
+    let scaleDegreesToPosibillities = {};
+    let currentScaleDegree = 0;
+    for (let scaleNote of scaleNotes) {
+        scaleDegreesToPosibillities[currentScaleDegree] = currentNotePosibillities[scaleNote];
+        currentScaleDegree++;
     }
-    );
+    
+    console.log(`scaleDegreesToPosibillities: ${JSON.stringify(scaleDegreesToPosibillities)}`);
 
     var totalPossibilitySpace = 0;
-    notesInScaleToPosibillities.forEach((note, value_in_table) => {
-        totalPossibilitySpace += value_in_table;
-    });
-
-    // Calculating notes probabilities by taking number of occurences and dividing by the total number of occurences
-    // const notesProbabilities = notesInScaleToPosibillities.map(x => x / totalPossibilitySpace);
-    // Generate a random number between 0 - totalPossibilitySpace
+    for (const note in scaleDegreesToPosibillities) {
+        totalPossibilitySpace += scaleDegreesToPosibillities[note];
+    }
+    console.log(`totalPossibilitySpace: ${totalPossibilitySpace}`);
 
     const randomNumber = getRandomInt(totalPossibilitySpace);
+    console.log(`Generated random number ${randomNumber}`);
     var sumOfOccurences = 0;
-    scaleNotes.forEach((currentNote) => {
-        sumOfOccurences += notesInScaleToPosibillities[currentNote];
+    for (const scaleNote in scaleDegreesToPosibillities) {
+        const scaleNoteOccurences = scaleDegreesToPosibillities[scaleNote];
+        console.log(`scaleNote ${scaleNote} occurences: ${scaleNoteOccurences}`);
+        sumOfOccurences += scaleDegreesToPosibillities[scaleNote];
         if (randomNumber < sumOfOccurences) {
-            return currentNote;
+            console.log(`Next note: ${scaleNote}`);
+            return scaleNote;
         }
-    });
+    };
+    throw 'Could not generate next note!!';
 }
 
 function getRandomInt(max) {
@@ -65,19 +70,25 @@ function getCurrentScale() {
     return parseInt(nodeSelect.options[nodeSelect.selectedIndex].getAttribute("noteIndex"));
 }
 
-function getInputNoteFromUser() {
-    // Assuming a single number which represent a note
-    return window.NOTES_SELECTED_BY_USER[-1];
+// function getMostRightNote() {
+//     let last = window.NOTES_SELECTED_BY_USER.length -1;
+//     // Assuming a single number which represent a note
+//     return window.NOTES_SELECTED_BY_USER[last];
+// }
+//returns the far right note that had been played 
+function getLastScaleDegreePlayedByUser()
+{
+    return window.LAST_SCALE_DEGREE_PLAYED_BY_USER;
 }
 
 function getNotesInMajorScale(rootNote) {
     return [rootNote,
         getNoteByInterval(rootNote, 2),
-        getNoteByInterval(rootNote, 3),
+        getNoteByInterval(rootNote, 4),
         getNoteByInterval(rootNote, 5),
         getNoteByInterval(rootNote, 7),
-        getNoteByInterval(rootNote, 8),
-        getNoteByInterval(rootNote, 10)];
+        getNoteByInterval(rootNote, 9),
+        getNoteByInterval(rootNote, 11)];
 }
 
 function getNoteByInterval(originalNote, interval) {
@@ -87,4 +98,4 @@ function getNoteByInterval(originalNote, interval) {
 
 
 
-export { generateNextNote }; // a list of exported items
+export { generateNextNote, getLastScaleDegreePlayedByUser }; // a list of exported items

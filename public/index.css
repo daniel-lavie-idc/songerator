@@ -53,3 +53,8 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.up_right , .up_left{
+  flex-wrap:nowrap;
+}
+.ul_indicators{
+}
