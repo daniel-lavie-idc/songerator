@@ -1,9 +1,9 @@
 import { generateNextNote, getLastScaleDegreePlayedByUser } from "./noteGenerator";
+import { drawThisInSeq } from "./globals"
 
 
-function hookStepSequencerUpdateCell() {
-    console.log("In " + hookStepSequencerUpdateCell);
-    var stepSeq = document.querySelector("tone-step-sequencer");
+function hookStepSequencerUpdateCell(sequencer) {
+    var stepSeq = document.querySelector(sequencer.id);
     var originalUpdateCell = stepSeq._updateCell;
     var bindedOriginalUpdateCell = originalUpdateCell.bind(stepSeq);
     stepSeq._updateCell = (column, row) => {
@@ -11,12 +11,11 @@ function hookStepSequencerUpdateCell() {
         const scaleDegree = stepSeq.rows - (row + 1); // We want to count the scale from bottom to top in the sequencer
         //we refer to the bottom row as the first row (instead of the top row)
         if (stepSeq._matrix[column][row] === false) {
-            console.log("User clicked note number: " + noteNumber + ", scale degree: " + scaleDegree);
-            window.NOTES_SELECTED_BY_USER.push(scaleDegree);
-            if (noteNumber > window.MAX_NOTE_NUMBER_PLAYED) {
-                console.log(`New latest note number ${noteNumber} was detected, updating last (note) scale degree: ${scaleDegree}`);
-                window.MAX_NOTE_NUMBER_PLAYED = noteNumber;
-                window.LAST_SCALE_DEGREE_PLAYED_BY_USER = scaleDegree;
+            console.log(`SequencerID: ${sequencer.id} - User clicked note number: ${noteNumber}, scale degree: ${scaleDegree}`);
+            if (sequencer.lastNoteNumber == null || noteNumber > sequencer.lastNoteNumber) {
+                console.log(`SequencerID: ${sequencer.id} - New latest note number ${noteNumber} was detected, updating last (note) scale degree: ${scaleDegree}`);
+                sequencer.lastNoteNumber = noteNumber;
+                sequencer.lastNoteDegree = scaleDegree;
             }
         }
         /* TODO: Decide if it's necessary
@@ -37,14 +36,15 @@ function hookStepSequencerUpdateCell() {
 }
 
 // fills the rest of the sequencer
-function fillUp() {
-    console.log(`In fillUp function`);
-    var stepSeq = document.querySelector("tone-step-sequencer");
-    const scaleDegreeChosenByUser = getLastScaleDegreePlayedByUser();
+function fillUp(sequencer) {
+    console.log(`In fillUp function, sequencer id: ${sequencer.id}`);
+    var stepSeq = document.querySelector(sequencer.id);
+    const scaleDegreeChosenByUser = sequencer.lastNoteDegree;
     console.log(`fillUp::scaleDegreeChosenByUser: ${scaleDegreeChosenByUser}`);
     let lastScaleDegree = scaleDegreeChosenByUser;
-    let lastNoteNumber = window.MAX_NOTE_NUMBER_PLAYED + 1;
-    do {
+    //lastNoteNumber is the far right played note 
+    let lastNoteNumber = sequencer.lastNoteNumber + 1;
+    while (lastNoteNumber < stepSeq.columns) {
         const nextNote = parseInt(generateNextNote(lastScaleDegree));
         console.log(`fillUp:: next note = ${nextNote}`);
         if (nextNote === -1) {
@@ -54,19 +54,10 @@ function fillUp() {
         }
         lastScaleDegree = nextNote;
         console.log(`fillUp: Setting note number ${lastNoteNumber}, lastScaleDegree: ${lastScaleDegree}`);
-        drawInSeq(lastNoteNumber, lastScaleDegree);
+        drawThisInSeq(lastNoteNumber, lastScaleDegree, sequencer.id, true);
         lastNoteNumber++;
-    } while (lastNoteNumber < stepSeq.columns)
-}
-
-//TODO: Add sequencer as parameter in order to be able to use on all sequencers?
-function drawInSeq(noteNumber, scaleDegree) {
-    let stepSeq = document.querySelector("tone-step-sequencer");
-    console.log(`drawInSeq::scaleDegree = ${scaleDegree}`);
-    const rowInSequencer = stepSeq.rows - (parseInt(scaleDegree) + 1);
-    console.log(`drawInSeq::rowInSequencer = ${rowInSequencer}`);
-    stepSeq._matrix[noteNumber][rowInSequencer] = true;
-    stepSeq.requestUpdate()
+    }
+    sequencer.lastNoteNumber = stepSeq.columns - 1; // Setting last note to last note of the matrix, so autocomplete would not be invoked again
 }
 
 export { hookStepSequencerUpdateCell, fillUp };
