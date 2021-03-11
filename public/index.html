@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#000000" />
+   <meta name="theme-color" content="#000000" />
     <meta name="description" />
     <link
       href="https://cdn.jsdelivr.net/npmf/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
@@ -248,117 +248,6 @@
             START_NOTE = document.getElementById("note_select").value;
           });
       */
-
-       function setupSynth(synthId, synthTone, startNote) {
-        var SCALE_JUMP = [0, 2, 3, 5, 7, 8, 10, 12];
-        document
-          .querySelector(synthId)
-          .addEventListener("trigger", ({ detail }) => {
-            switch (SCALE_SELECT) {
-              case 1:
-                SCALE_JUMP = MINOR_INTERVALS;
-                break;
-              case 2:
-                SCALE_JUMP = MAJOR_INTERVALS;
-                break;
-            }
-
-            let CURRENT_SCALE = [];
-            for (let i = 0; i < SCALE_JUMP.length; i++) {
-              CURRENT_SCALE[i] = startNote + SCALE_JUMP[i];
-            }
-            switch (detail.row) {
-              case 0: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[0], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[0]);
-                break;
-              }
-              case 1: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[1], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[1]);
-                break;
-              }
-              case 2: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[2], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[2]);
-                break;
-              }
-              case 3: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[3], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[3]);
-                break;
-              }
-              case 4: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[4], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[4]);
-                break;
-              }
-              case 5: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[5], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[5]);
-                break;
-              }
-              case 6: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[6], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[6]);
-                break;
-              }
-              case 7: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[7], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[7]);
-                break;
-              }
-              case 8: {
-                synthTone.triggerAttackRelease(
-                  Tone.Frequency(CURRENT_SCALE[8], "midi").toNote(),
-                  "4n",
-                  detail.time
-                );
-                NOTES_SELECTED_BY_USER.push(CURRENT_SCALE[8]);
-                break;
-              }
-            }
-          });
-      } 
-
-      const C4 = 60;
-      const C3 = 48;
-      setupSynth("#up_left", synthUpperLeft, C4);
-      setupSynth("#up_right", synthUpperRight, C4);
-      setupSynth("#down_left", synthBottomLeft, C4);
-      setupSynth("#down_right", synthBottomRight, C3); 
       
     </script>
     <div class="footer"></div>

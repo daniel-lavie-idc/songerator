@@ -23,23 +23,23 @@ document.getElementById("VERSE_SELECT").addEventListener("change", () => {
     let seq_dr = document.getElementById("down_right");
 
     //update the data of the current verse in the song object
-    Globals.updateCurrentSongPartSeq(song.currentSongPart.sequencer1.id, seq_ul._matrix); 
-    Globals.updateCurrentSongPartSeq(song.currentSongPart.sequencer2.id, seq_ur._matrix); 
-    Globals.updateCurrentSongPartSeq(song.currentSongPart.sequencer3.id, seq_dl._matrix); 
-    Globals.updateCurrentSongPartSeq(song.currentSongPart.sequencer4.id, seq_dr._matrix);
+    Globals.updateCurrentSONGPARTSeq(song.currentSONGPART.sequencer1.id, seq_ul._matrix); 
+    Globals.updateCurrentSONGPARTSeq(song.currentSONGPART.sequencer2.id, seq_ur._matrix); 
+    Globals.updateCurrentSONGPARTSeq(song.currentSONGPART.sequencer3.id, seq_dl._matrix); 
+    Globals.updateCurrentSONGPARTSeq(song.currentSONGPART.sequencer4.id, seq_dr._matrix);
     //setting the selected verse as the current verse 
-    song.currentSongPart = song[selectedVerseName];
+    song.currentSONGPART = song[selectedVerseName];
     
     //load the existing data of the chosen verse
-    writeToSeq(song.currentSongPart.sequencer1, "#up_left");
-    writeToSeq(song.currentSongPart.sequencer2, "#up_right");
-    writeToSeq(song.currentSongPart.sequencer3, "#down_left");
-    writeToSeq(song.currentSongPart.sequencer4, "#down_right");
+    writeToSeq(song.currentSONGPART.sequencer1, "#up_left");
+    writeToSeq(song.currentSONGPART.sequencer2, "#up_right");
+    writeToSeq(song.currentSONGPART.sequencer3, "#down_left");
+    writeToSeq(song.currentSONGPART.sequencer4, "#down_right");
     //updates the chosen root note and scale
     var scaleSelect = document.getElementById("SCALE_SELECT");
-    scaleSelect.value = song.currentSongPart.SCALE_SELECT;
+    scaleSelect.value = song.currentSONGPART.SCALE_SELECT;
     var noteSelect = document.getElementById("note_select");
-    noteSelect.value = song.currentSongPart.START_NOTE;
+    noteSelect.value = song.currentSONGPART.START_NOTE;
 });
 //write data into given sequencer
 function writeToSeq(seq, seqID){
