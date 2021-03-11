@@ -229,7 +229,7 @@
      
       document
         .querySelector("tone-play-toggle")
-        .addEventListener("start", () => Tone.Transport.start());
+        .addEventListener("start", () => Tone.Transport.start("+0.1"));
       document
         .querySelector("tone-slider")
         .addEventListener(

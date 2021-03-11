@@ -1,4 +1,4 @@
-import * as Tone from "tone";
+//import * as Tone from "tone";
 
 window.C4 = 60;
 window.C3 = 48;
@@ -10,13 +10,13 @@ window.LAST_SCALE_DEGREE_PLAYED_BY_USER = -2;
 window.CURRENT_SCALE = [];
 window.SCALE_JUMP = [0, 2, 3, 5, 7, 8, 10, 12];
 
-window.SYNTH_UPPER_LEFT = new Tone.PolySynth().toDestination();
-window.SYNTH_UPPER_RIGHT = new Tone.DuoSynth().toDestination();
-window.SYNTH_UPPER_RIGHT.volume.value = -8; // Normalize DuoSynth volume, as it's very loud
+//window.SYNTH_UPPER_LEFT = new Tone.PolySynth().toDestination();
+//window.SYNTH_UPPER_RIGHT = new Tone.DuoSynth().toDestination();
+//window.SYNTH_UPPER_RIGHT.volume.value = -8; // Normalize DuoSynth volume, as it's very loud
 
-window.SYNTH_BOTTOM_LEFT = new Tone.MetalSynth().toDestination();
-window.SYNTH_BOTTOM_LEFT.volume.value = -8; // Normalize MetalSynth volume, as it's very loud
-window.SYNTH_BOTTOM_RIGHT = new Tone.MonoSynth().toDestination();
+//window.SYNTH_BOTTOM_LEFT = new Tone.MetalSynth().toDestination();
+//window.SYNTH_BOTTOM_LEFT.volume.value = -8; // Normalize MetalSynth volume, as it's very loud
+//window.SYNTH_BOTTOM_RIGHT = new Tone.MonoSynth().toDestination();
 
  // The rightmost note played by the user, -2 means no note was chosen (-1 is silence)
 //gets an list of tuples representing the chosen notes in the current verse,
@@ -41,7 +41,7 @@ function arrayToMatrix(arr) {
 //  (by default we have verse1, verse2 and chorus)
 function createSongPart(givenBPM, startNote, scaleSelect) {
     let songPart = {
-        START_NOTE: startNote,
+        startNote: startNote,
         SCALE_SELECT: scaleSelect,
         bpm: givenBPM,
         sequencer1: { id: "#up_left", matrix: arrayToMatrix([]), lastNoteNumber: null, lastNoteDegree: null },
@@ -64,10 +64,13 @@ window.SONG.currentSongPart = window.SONG.verse1;
 
 //updates the data of the current part of the window.SONG
 function updateCurrentSongPart(givenBPM, startNote, scaleSelect) {
-    window.SONG[window.SONG.currentSongPart].START_NOTE = startNote;
+    window.SONG[window.SONG.currentSongPart].startNote = startNote;
     window.SONG[window.SONG.currentSongPart].SCALE_SELECT = scaleSelect;
     window.SONG[window.SONG.currentSongPart].bpm = givenBPM;
+}
 
+function changeSongPart(songPart) {
+    // TODO
 }
 
 //gets an ID of a sequencer, updates its root note
