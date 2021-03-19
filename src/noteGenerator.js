@@ -27,6 +27,7 @@ function generateNextNote(lastScaleDegreePlayed) {
     // Assuming the user chose only a single note
     lastScaleDegreePlayed = lastScaleDegreePlayed % (scaleNotes.length - 1); // If we got an octave or above, normalize the value
     console.log("Scale degree chosen by user: " + lastScaleDegreePlayed);
+    console.log("note occurence row " + scaleNotes[lastScaleDegreePlayed]);
 
     // Indexing the note occurrences table according to the scale degree
     const currentNotePosibillities = notesOccurrences[scaleNotes[lastScaleDegreePlayed]];
@@ -101,22 +102,23 @@ function getLastScaleDegreePlayedByUser() {
 
 function getNotesInMajorScale(rootNote) {
     return [rootNote,
-        getNoteByInterval(rootNote, 2),
-        getNoteByInterval(rootNote, 4),
-        getNoteByInterval(rootNote, 5),
-        getNoteByInterval(rootNote, 7),
-        getNoteByInterval(rootNote, 9),
-        getNoteByInterval(rootNote, 11)];
+        getNoteByInterval(rootNote, 2)%12,
+        getNoteByInterval(rootNote, 4)%12,
+        getNoteByInterval(rootNote, 5)%12,
+        getNoteByInterval(rootNote, 7)%12,
+        getNoteByInterval(rootNote, 9)%12,
+        getNoteByInterval(rootNote, 11)%12];
 }
 
 function getNotesInMinorScale(rootNote) {
-    return [rootNote,
-        getNoteByInterval(rootNote, 2),
-        getNoteByInterval(rootNote, 3),
-        getNoteByInterval(rootNote, 5),
-        getNoteByInterval(rootNote, 7),
-        getNoteByInterval(rootNote, 8),
-        getNoteByInterval(rootNote, 10)];
+    return [rootNote%12,
+        getNoteByInterval(rootNote, 2)%12,
+        getNoteByInterval(rootNote, 3)%12,
+        getNoteByInterval(rootNote, 5)%12,
+        getNoteByInterval(rootNote, 7)%12,
+        getNoteByInterval(rootNote, 8)%12,
+        getNoteByInterval(rootNote, 10)%12
+       ];
 }
 
 function getNoteByInterval(originalNote, interval) {

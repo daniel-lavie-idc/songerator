@@ -55,9 +55,9 @@ function createSongPart(givenBPM, startNote, scaleSelect) {
 // (it includes verses, in each verse we have the data of the sequencers, 
 // and chosen root note and scale)
 window.SONG = {
-    verse1: createSongPart(120, 60, "major"),
-    verse2: createSongPart(120, 60, "major"),
-    chorus1: createSongPart(120, 60, "major")
+    verse1: createSongPart(120, 60, "1"),
+    verse2: createSongPart(120, 60, "1"),
+    chorus1: createSongPart(120, 60, "1")
 }
 // currentSongPart refers to the verse/chorus the user is currently viewing
 window.SONG.currentSongPart = window.SONG.verse1;
@@ -73,29 +73,36 @@ function changeSongPart(songPart) {
     // TODO
 }
 
-//gets an ID of a sequencer, updates its root note
+//gets an ID of a sequencer, updates its last note
 function updateLastNote(seqID, noteNumber, noteDegree, val) {
-    if (val === true && window.SONG[window.SONG.currentSongPart].lastNoteNumber < noteNumber) {
-        window.SONG[window.SONG.currentSongPart][seqID].lastNoteNumber = noteNumber;
-        window.SONG[window.SONG.currentSongPart][seqID].lastNoteDegree = noteDegree;
+    console.log(seqID);
+    let seqName = idToName(seqID)
+    if (val === true && window.SONG.currentSongPart[seqName].lastNoteNumber < noteNumber) {
+        window.SONG.currentSongPart[seqName].lastNoteNumber = noteNumber;
+        window.SONG.currentSongPart[seqName].lastNoteDegree = noteDegree;
     }
     if (val === false) {
-        window.SONG[window.SONG.currentSongPart][seqID].lastNoteNumber = null;
-        window.SONG[window.SONG.currentSongPart][seqID].lastNoteDegree = null;
+        window.SONG.currentSongPart[seqName].lastNoteNumber = null;
+        window.SONG.currentSongPart[seqName].lastNoteDegree = null;
         for (let j = 0; j < 16; j++) {
             for (let i = 0; i < 8; i++) {
-                if (window.SONG[window.SONG.currentSongPart][seqID].matrix[i][j] === true) {
-                    window.SONG[window.SONG.currentSongPart][seqID].lastNoteNumber = j;
-                    window.SONG[window.SONG.currentSongPart][seqID].lastNoteDegree = i;
+                if (window.SONG.currentSongPart[seqName].matrix[i][j] === true) {
+                    window.SONG.currentSongPart[seqName].lastNoteNumber = j;
+                    window.SONG.currentSongPart[seqName].lastNoteDegree = i;
+                    console.log("i j  " + i + ";"+j);
                 }
             }
         }
     }
+    console.log("last note is : " + window.SONG.currentSongPart[seqName].lastNoteNumber);
+    
+    
 }
 
 //
 function updateCurrentSongPartSeq(seqID, seqMatrix) {
-    window.SONG[window.SONG.currentSongPart][seqID].matrix = seqMatrix;
+    let seqName = idToName(seqID);
+    window.SONG.currentSongPart[seqName].matrix = seqMatrix;
     updateLastNote(seqID, 0, 0, false);
 }
 
@@ -124,11 +131,23 @@ function drawThisInSeq(noteNumber, scaleDegree, id, val) {
     console.log(`drawThisInSeq:: id = ${id}`);
     let stepSeq = document.querySelector(id);
     //console.log(`drawInSeq::scaleDegree = ${scaleDegree}`);
-    const rowInSequencer = stepSeq.rows - (parseInt(scaleDegree) + 1);
+    const rowInSequencer = parseInt(scaleDegree);//stepSeq.rows - (parseInt(scaleDegree) + 1);
     console.log(`drawThisInSeq::rowInSequencer = ${rowInSequencer}, noteNumber = ${noteNumber}`);
     stepSeq._matrix[noteNumber][rowInSequencer] = val;
-    stepSeq.requestUpdate()
+    if (val === true){
+        console.log("YES");
+    }
+    stepSeq.requestUpdate();
+}
+function idToName(id){
+    switch(id){
+        case "#up_left": return "sequencer1";
+        case "#up_right": return "sequencer2";
+        case "#down_left": return "sequencer3";
+        case "#down_right": return "sequencer4";
+    }
+    return "sequencer1"
 }
 
 
-export {drawThisInSeq}
+export {drawThisInSeq, updateLastNote, idToName,arrayToMatrix, updateCurrentSongPartSeq}

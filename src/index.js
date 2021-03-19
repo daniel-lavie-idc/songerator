@@ -1,6 +1,7 @@
 import * as Tone from "tone";
 import * as NoteGenerator from './noteGenerator.js';
 import * as Algorithm from './Algorithm.js';
+import {changeSongPart} from './Demo.js';
 
 let SYNTH_UPPER_LEFT = new Tone.PolySynth().toDestination();
 let SYNTH_UPPER_RIGHT = new Tone.DuoSynth().toDestination();
@@ -34,6 +35,7 @@ document.getElementById("SCALE_SELECT").addEventListener("change", () => {
   updateWithSelector();
   console.log("Scale select: " + window.SONG.currentSongPart.startNote)
   renderSeq(window.SONG.currentSongPart.startNote);
+  window.SONG.currentSongPart.SCALE_SELECT = document.getElementById("SCALE_SELECT").value;
   // TODO:PLACE HERE FUNC TO RENDER THE NEW SEQUENCER
 });
 
@@ -45,6 +47,10 @@ document.getElementById("note_select").addEventListener("change", () => {
   updateWithSelector();
   renderSeq(window.SONG.currentSongPart.startNote);
   //renderSeq(window.newNote)
+});
+
+document.getElementById("VERSE_SELECT").addEventListener("change", () => {
+  changeSongPart();
 });
 
 function updateWithSelector() {
